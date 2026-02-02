@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter 
 @Setter
 @Table(name = "users")
-public class User extends AuditableEntity {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,8 +32,5 @@ public class User extends AuditableEntity {
 
     @Column(nullable = false)
     private String role;
-
-    @Column(nullable = false)
-    private boolean enabled;
     
 }

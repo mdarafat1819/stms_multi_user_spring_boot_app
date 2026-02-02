@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.stms_multi_user.dto.OtpRequest;
-import com.example.stms_multi_user.services.RegistrationService;
+import com.example.stms_multi_user.dto.UserRegistrationRequest;
+import com.example.stms_multi_user.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -18,9 +19,18 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/auth")
 
 public class AuthController {
-    private final RegistrationService registrationService;
+    private final UserService userService;
 
-    public AuthController(RegistrationService registrationService) {
-        this.registrationService = registrationService;
+    public AuthController(UserService userService) {
+        this.userService = userService;
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> userRegistration(@RequestBody UserRegistrationRequest request) {
+        userService.register(request);
+        return ResponseEntity.ok(
+            Map.of("message", "Registration Successfull, Please verify your email using following url")
+        );
+    }
+    
 }
