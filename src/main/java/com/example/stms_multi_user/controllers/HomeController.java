@@ -46,5 +46,11 @@ public class HomeController {
         return ResponseEntity.ok(
             Map.of("message", "Verification Failed"));
     }
-
+    @GetMapping("/api/hello") 
+    public ResponseEntity<?>hello() {
+        return ResponseEntity.ok(
+            Map.of("message", "Hello World")
+        );
+    }
 }
+
