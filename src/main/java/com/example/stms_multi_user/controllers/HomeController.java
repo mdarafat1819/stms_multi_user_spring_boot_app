@@ -1,4 +1,4 @@
-package com.example.stms_multi_user.controller;
+package com.example.stms_multi_user.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
