@@ -12,6 +12,8 @@ import com.example.stms_multi_user.entities.User;
 import com.example.stms_multi_user.repositories.EmailOtpRepository;
 import com.example.stms_multi_user.repositories.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -44,7 +46,7 @@ public class UserService {
         emailOtpService.generateAndSendOtp(request.getEmail());
 
     }
-
+    @Transactional
     public void verifyEmailAndActiveUser(VerifyOtpRequest request) {
 
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());

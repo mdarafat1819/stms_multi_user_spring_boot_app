@@ -11,4 +11,12 @@ public class VerifyOtpRequest {
     public String getOtp() {
         return otp;
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
 }

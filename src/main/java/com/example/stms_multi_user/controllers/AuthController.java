@@ -59,7 +59,8 @@ public class AuthController {
     }
 
     @PostMapping("/verify-user-email")
-    public ResponseEntity<?> verifyAndActiveUser(VerifyOtpRequest request) {
+    public ResponseEntity<?> verifyAndActiveUser(@RequestBody VerifyOtpRequest request) {
+        System.out.println(request.getEmail() + request.getOtp());
         userService.verifyEmailAndActiveUser(request);
         return ResponseEntity.ok(
             Map.of(
