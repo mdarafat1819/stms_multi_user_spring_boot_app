@@ -3,10 +3,9 @@ package com.example.stms_multi_user.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.stms_multi_user.dto.TaskRequest;
 import com.example.stms_multi_user.entities.Task;
 import com.example.stms_multi_user.services.TaskService;
-
-import jakarta.websocket.server.PathParam;
 
 import java.util.List;
 
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -39,12 +37,12 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task request) {
+    public Task createTask(@RequestBody TaskRequest request) {
         return taskService.createTask(request);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Integer id, @RequestBody Task request) {
+    public Task updateTask(@PathVariable Integer id, @RequestBody TaskRequest request) {
         return taskService.updateTask(id, request);
     }
 

@@ -2,12 +2,10 @@ package com.example.stms_multi_user.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-
-import javax.management.RuntimeErrorException;
-
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.example.stms_multi_user.dto.TaskRequest;
 import com.example.stms_multi_user.entities.Task;
 import com.example.stms_multi_user.repositories.TaskRepository;
 import com.example.stms_multi_user.security.SecurityUtil;
@@ -15,9 +13,11 @@ import com.example.stms_multi_user.security.SecurityUtil;
 @Service
 public class TaskService {
     private TaskRepository taskRepository;
+    private final ModelMapper modelMapper;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, ModelMapper modelMapper) {
         this.taskRepository = taskRepository;
+        this.modelMapper = modelMapper;
     }
 
     public List<Task> getAllTasks() {
@@ -28,7 +28,8 @@ public class TaskService {
         return taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found with id " + id));
     }
 
-    public Task createTask(Task task) {
+    public Task createTask(TaskRequest taskRequest) {
+        Task task = modelMapper.map(taskRequest, Task.class);
         task.setCreatedDate(LocalDateTime.now());
         task.setCreatedBy(SecurityUtil.getCurrentUserEmail());
         task.setUpdateDate(LocalDateTime.now());
@@ -50,12 +51,14 @@ public class TaskService {
             throw new RuntimeException("You are not authorize to delete this task");
     }
 
-    public Task updateTask(Integer id, Task updateTask) {
+    public Task updateTask(Integer id, TaskRequest updateTaskRequest) {
         Task existingTask = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id " + id));
 
         String currentUserEmail = SecurityUtil.getCurrentUserEmail();
         String currentUserRole = SecurityUtil.getUserRole();
+
+        Task updateTask = modelMapper.map(updateTaskRequest, Task.class);
 
         if (updateTask.getTitle() != null)
             existingTask.setTitle(updateTask.getTitle());
