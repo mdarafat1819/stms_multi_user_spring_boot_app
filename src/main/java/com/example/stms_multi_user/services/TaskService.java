@@ -3,10 +3,12 @@ package com.example.stms_multi_user.services;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.example.stms_multi_user.dto.TaskRequest;
 import com.example.stms_multi_user.entities.Task;
+import com.example.stms_multi_user.exceptions.TaskNotFoundException;
 import com.example.stms_multi_user.repositories.TaskRepository;
 import com.example.stms_multi_user.security.SecurityUtil;
 
@@ -25,9 +27,8 @@ public class TaskService {
     }
 
     public Task getTask(Integer id) {
-        return taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found with id " + id));
+        return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
     }
-
     public Task createTask(TaskRequest taskRequest) {
         Task task = modelMapper.map(taskRequest, Task.class);
         task.setCreatedDate(LocalDateTime.now());
@@ -40,7 +41,7 @@ public class TaskService {
     public void deletTask(Integer id) {
 
         Task task = taskRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Task not found with id: " + id));
+                () -> new TaskNotFoundException(id));
 
         String currentUserEmail = SecurityUtil.getCurrentUserEmail();
         String currentUserRole = SecurityUtil.getUserRole();
@@ -48,12 +49,12 @@ public class TaskService {
         if (task.getCreatedBy().equals(currentUserEmail) || currentUserRole.equals("ADMIN")) {
             taskRepository.deleteById(id);
         } else
-            throw new RuntimeException("You are not authorize to delete this task");
+            throw new AuthorizationDeniedException("You are not authorized to delete this task.");
     }
 
     public Task updateTask(Integer id, TaskRequest updateTaskRequest) {
         Task existingTask = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found with id " + id));
+                .orElseThrow(() -> new TaskNotFoundException(id));
 
         String currentUserEmail = SecurityUtil.getCurrentUserEmail();
         String currentUserRole = SecurityUtil.getUserRole();
@@ -64,7 +65,7 @@ public class TaskService {
             existingTask.setTitle(updateTask.getTitle());
         if (updateTask.getDescription() != null)
             existingTask.setDescription(updateTask.getDescription());
-        if (updateTask.getDescription() != null)
+        if (updateTask.getStatus() != null)
             existingTask.setStatus(updateTask.getStatus());
 
         existingTask.setUpdateDate(LocalDateTime.now());
@@ -73,8 +74,7 @@ public class TaskService {
         if (existingTask.getCreatedBy().equals(currentUserEmail) || currentUserRole.equals("ADMIN")) {
             return taskRepository.save(existingTask);
         } else
-            throw new RuntimeException("You are not authorize to delete this task");
+            throw new AuthorizationDeniedException("You are not authorized to update this task.");
 
-        // return taskRepository.save(existingTask);
     }
 }
